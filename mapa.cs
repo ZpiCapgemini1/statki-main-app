@@ -24,6 +24,7 @@ namespace WindowsFormsApplication1
         {
             return plansza[y, x];
         }
+
         public void randomRozstaw()
         {
             bool flaga;
@@ -47,7 +48,7 @@ namespace WindowsFormsApplication1
                         } while (flaga);
                         for (int i = y; i < y + maszty; i++)
                             plansza[i,x] = maszty;
-                        //obramowanie(x, y, maszty, true);
+                        obramowanie(x, y, maszty, true);
                     }
                     else
                     {
@@ -64,15 +65,17 @@ namespace WindowsFormsApplication1
                         } while (flaga);
                         for (int i = x; i < x + maszty; i++)
                             plansza[y,i] = maszty;
-                        //obramowanie(x, y, maszty, false);
+                        obramowanie(x, y, maszty, false);
                     }
                 }
             }
         }
+
         public void strzal()
         {
 
         }
+
        /* public bool czyWin()
         {
             if (licznik == 20)
@@ -88,16 +91,15 @@ namespace WindowsFormsApplication1
             else
                 return false;
         }
+
         private void obramowanie(int x, int y, int maszty, bool pion)
         {
             for (int i = 0; i < maszty; i++)
             {
-                //cout<<" i wynosi: "<<i<<" x wynosi: "<<x<<" y wynosi: "<<y;
                 for (int j = -1; j < 2; j++)
                 {
                     for (int k = 1; k > -2; k--)
                     {
-                        //cout<<"\n\nczo tu sie dzieje";
                         if ((y + k) >= 0 && (y + k) <= 9 && (x + j) >= 0 && (x + j) <= 9)
                         {
                             if (plansza[y + k,x + j] == 0)
@@ -109,7 +111,6 @@ namespace WindowsFormsApplication1
                     y++;
                 if (!pion)
                     x++;
-                //cout<<"\npo ifach";
             }  
         }
     }
