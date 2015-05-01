@@ -12,46 +12,60 @@ namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
+        
         bool[] flagablokady = new bool[5];
+        int x,y;
+        mapa MojaPlansza = new mapa();
+        PictureBox[,] PBPrzeciwnika = new PictureBox[11,11];
+        PictureBox[,] PBMoje = new PictureBox[11, 11];	
+
+
         public Form1()
         {
             InitializeComponent();
-            pictureBox2.Load("icons\\3.png");
-            pictureBox4.Load("icons\\3.png");
-            pictureBox5.Load("icons\\3.png");
-            pictureBox6.Load("icons\\4s.png");
-            pictureBox7.Load("icons\\4s.png");
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            for(int i=0;i<5;i++)
+            transparentMessagePanel1.MouseClick += klik_myszki;
+            MojaPlansza.randomRozstaw();
+            for (int x = 0; x < 11; x++)
             {
-                flagablokady[i] = false;
+                for (int y = 0; y < 11; y++)
+                {
+                    PBMoje[y, x] = new PictureBox();
+                    PBMoje[y, x].Name = "PBMoje_" + x.ToString() + "_" + y.ToString();
+                    PBMoje[y, x].Location = new Point(713 + (x * 32), 44 + (y * 28));
+                    PBMoje[y, x].Size = new Size(32, 28);
+                    //PBMoje[y, x].BackColor = Color.Transparent;
+                    this.Controls.Add(PBMoje[y, x]);
+                }
             }
+            updateMapy();
+            //pictureBox3.Parent = PBMoje[0, 0]; 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void updateMapy()
         {
-            if (flagablokady[0] == false)
+            string temp;
+            
+            for(int x=0;x<10;x++)
             {
-                Log.Items.Add("A1 trafiony!");
-                Bitmap bm = new Bitmap("icons\\strzall.png");
-                button1.Image=bm;
-                flagablokady[0] = true;
+                for(int y=0;y<10;y++)
+                {
+                    temp = MojaPlansza.czytaj(x, y).ToString();
+                    //PBMoje[y,x].Load("icons\\" + temp.ToString() + ".png");
+                    PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\" + temp.ToString() + ".png");
+                    PBMoje[y, x].BackgroundImageLayout = ImageLayout.Stretch;
+                    temp = "x: " + x.ToString() + " y: " + y.ToString();
+                    Log.Items.Add(temp);
+                    textBox1.Text = "x: "+x.ToString()+" y: "+y.ToString();
+                }
             }
+            
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (flagablokady[1] == false)
-            {
-                Log.Items.Add("B1 trafiony!");
-                Bitmap bm = new Bitmap("icons\\strzall.png");
-                button2.Image = bm;
-                flagablokady[1] = true;
-            }
-        }
+       
 
         private void wyslij_Click(object sender, EventArgs e)
         {
@@ -61,34 +75,29 @@ namespace WindowsFormsApplication1
             }
             textBox1.Clear();
         }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            if (flagablokady[2] == false)
-            {
-                Log.Items.Add("B5 woda!");
-                Bitmap bm = new Bitmap("icons\\kropa.png");
-                button4.Image = bm;
-                flagablokady[2] = true;
-            }
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (flagablokady[3] == false)
-            {
-                Log.Items.Add("B4 trafiony zatopiony!");
-                Bitmap bm = new Bitmap("icons\\zatopiony.png");
-                button3.Image = bm;
-                flagablokady[3] = true;
-            }
-        }
+        
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-           
+           /* MouseEventArgs eM = (MouseEventArgs)e;
+            x = (eM.X - 45) / 35;
+            y = (eM.Y - 45) / 34;
+            x++; y++;
+            Log.Items.Add("Stzal na   x: " + x + " y: " + y);
+            textBox1.Text = eM.X.ToString() + ":" + eM.Y.ToString();
+            textBox1.Text = x.ToString() + ":" +y.ToString();*/
         }
 
+        private void klik_myszki(object sender, EventArgs e)
+        {
+            MouseEventArgs eM = (MouseEventArgs)e;
+            x = (eM.X - 45) / 35;
+            y = (eM.Y - 45) / 34;
+            x++; y++;
+            Log.Items.Add("Stzal na   x: " + x + " y: " + y);
+            textBox1.Text = eM.X.ToString() + ":" + eM.Y.ToString();
+            textBox1.Text = x.ToString() + ":" + y.ToString();
+        }
        
     }
 }
