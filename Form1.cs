@@ -16,9 +16,10 @@ namespace WindowsFormsApplication1
         bool[] flagablokady = new bool[5];
         int x,y;
         mapa MojaPlansza = new mapa();
-        PictureBox[,] PBPrzeciwnika = new PictureBox[11,11];
-        PictureBox[,] PBMoje = new PictureBox[11, 11];	
-
+        PictureBox[,] PBPrzeciwnika = new PictureBox[10,10];
+        PictureBox[,] PBMoje = new PictureBox[10, 10];	
+        PictureBox PrawaStrona = new PictureBox();
+        PictureBox LewaStrona = new PictureBox();
 
         public Form1()
         {
@@ -29,20 +30,49 @@ namespace WindowsFormsApplication1
         {
             transparentMessagePanel1.MouseClick += klik_myszki;
             MojaPlansza.randomRozstaw();
-            for (int x = 0; x < 11; x++)
+
+            int offsetX = 0;
+            int offsetY = 0;
+            for (int x = 0; x < 10; x++)
             {
-                for (int y = 0; y < 11; y++)
+                if (x > 6)
+                    offsetX = 3;
+                for (int y = 0; y < 10; y++)
                 {
+                    if (y >= 3)
+                        offsetY = 4;
                     PBMoje[y, x] = new PictureBox();
                     PBMoje[y, x].Name = "PBMoje_" + x.ToString() + "_" + y.ToString();
-                    PBMoje[y, x].Location = new Point(713 + (x * 32), 44 + (y * 28));
-                    PBMoje[y, x].Size = new Size(32, 28);
-                    //PBMoje[y, x].BackColor = Color.Transparent;
+                    PBMoje[y, x].Location = new Point(682 + ((x+1) * 34) + offsetX, 14 + ((y+1) * 34)+offsetY);
+                    PBMoje[y, x].Size = new Size(25, 25);
+                    PBMoje[y, x].BackgroundImageLayout = ImageLayout.Stretch;
                     this.Controls.Add(PBMoje[y, x]);
+                    PBPrzeciwnika[y, x] = new PictureBox();
+                    PBPrzeciwnika[y, x].Name = "PBPrzeciwnika_" + x.ToString() + "_" + y.ToString();
+                    PBPrzeciwnika[y, x].Location = new Point(12 + ((x + 1) * 34) + offsetX, 15 + ((y + 1) * 34) + offsetY);
+                    PBPrzeciwnika[y, x].Size = new Size(25, 25);
+                    //PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\4.png");
+                    PBPrzeciwnika[y, x].BackgroundImageLayout = ImageLayout.Stretch;
+                    this.Controls.Add(PBPrzeciwnika[y, x]);
+                    offsetY = 0;
                 }
+                offsetX = 0;
             }
             updateMapy();
-            //pictureBox3.Parent = PBMoje[0, 0]; 
+
+            PrawaStrona.Name = "PBPrawa_Strona";
+            PrawaStrona.Location = new Point(670, 2);
+            PrawaStrona.Size = new Size(400, 400);
+            this.Controls.Add(PrawaStrona);
+            PrawaStrona.BackgroundImage = Image.FromFile("icons\\statki ftw.png");
+            PrawaStrona.BackgroundImageLayout = ImageLayout.Stretch;
+
+            LewaStrona.Name = "PBLewa_Strona";
+            LewaStrona.Location = new Point(0, 2);
+            LewaStrona.Size = new Size(400, 400);
+            this.Controls.Add(LewaStrona);
+            LewaStrona.BackgroundImage = Image.FromFile("icons\\statki ftw.png");
+            LewaStrona.BackgroundImageLayout = ImageLayout.Stretch;
         }
 
         private void updateMapy()
@@ -54,12 +84,10 @@ namespace WindowsFormsApplication1
                 for(int y=0;y<10;y++)
                 {
                     temp = MojaPlansza.czytaj(x, y).ToString();
-                    //PBMoje[y,x].Load("icons\\" + temp.ToString() + ".png");
-                    PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\" + temp.ToString() + ".png");
-                    PBMoje[y, x].BackgroundImageLayout = ImageLayout.Stretch;
+                    PBMoje[y,x].BackgroundImage = Image.FromFile("icons\\" + temp + ".png");
                     temp = "x: " + x.ToString() + " y: " + y.ToString();
-                    Log.Items.Add(temp);
-                    textBox1.Text = "x: "+x.ToString()+" y: "+y.ToString();
+                    //Log.Items.Add(temp);
+                    //textBox1.Text = "x: "+x.ToString()+" y: "+y.ToString();
                 }
             }
             
@@ -91,12 +119,20 @@ namespace WindowsFormsApplication1
         private void klik_myszki(object sender, EventArgs e)
         {
             MouseEventArgs eM = (MouseEventArgs)e;
-            x = (eM.X - 45) / 35;
-            y = (eM.Y - 45) / 34;
-            x++; y++;
-            Log.Items.Add("Stzal na   x: " + x + " y: " + y);
-            textBox1.Text = eM.X.ToString() + ":" + eM.Y.ToString();
-            textBox1.Text = x.ToString() + ":" + y.ToString();
+            x = (eM.X - 43) / 34;
+            y = (eM.Y - 44) / 34;
+           // Log.Items.Add("eM.X: " + eM.X + "eM.Y: " + eM.Y + " x: " + x + " y: " + y);
+
+            if(eM.X>40 && eM.Y>40)
+            {
+                if (x >= 0 && x < 10 && y >= 0 && y < 10)
+                {
+                    Log.Items.Add("Stzal na   x: " + (x+1).ToString() + " y: " + (y+1).ToString());
+                    Log.SelectedIndex = Log.Items.Count - 1;
+                    Log.SelectedIndex = -1;
+                    PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
+                }
+            }
         }
        
     }
