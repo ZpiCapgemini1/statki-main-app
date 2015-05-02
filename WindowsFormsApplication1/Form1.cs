@@ -22,9 +22,6 @@ namespace WindowsFormsApplication1
         public static List<UserDetail> ConnectedUsers = new List<UserDetail>();
         //==importy
         
-
-        //bool[] flagablokady = new bool[5];
-        int x,y;
         mapa MojaPlansza = new mapa();
         PictureBox[,] PBPrzeciwnika = new PictureBox[10,10];
         PictureBox[,] PBMoje = new PictureBox[10, 10];	
@@ -38,7 +35,7 @@ namespace WindowsFormsApplication1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            transparentMessagePanel1.MouseClick += klik_myszki;
+            transparentMessagePanel1.MouseClick += Mouse_Click;
             MojaPlansza.randomRozstaw();
 
             int offsetX = 0;
@@ -61,7 +58,6 @@ namespace WindowsFormsApplication1
                     PBPrzeciwnika[y, x].Name = "PBPrzeciwnika_" + x.ToString() + "_" + y.ToString();
                     PBPrzeciwnika[y, x].Location = new Point(12 + ((x + 1) * 34) + offsetX, 15 + ((y + 1) * 34) + offsetY);
                     PBPrzeciwnika[y, x].Size = new Size(25, 25);
-                    //PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\4.png");
                     PBPrzeciwnika[y, x].BackgroundImageLayout = ImageLayout.Stretch;
                     this.Controls.Add(PBPrzeciwnika[y, x]);
                     offsetY = 0;
@@ -96,8 +92,6 @@ namespace WindowsFormsApplication1
                     temp = MojaPlansza.czytaj(x, y).ToString();
                     PBMoje[y,x].BackgroundImage = Image.FromFile("icons\\" + temp + ".png");
                     temp = "x: " + x.ToString() + " y: " + y.ToString();
-                    //Log.Items.Add(temp);
-                    //textBox1.Text = "x: "+x.ToString()+" y: "+y.ToString();
                 }
             }
             
@@ -109,24 +103,14 @@ namespace WindowsFormsApplication1
         {
             if(textBox1.Text!="")
             {
-                //Czat.Items.Add("Ja: " + textBox1.Text);
-                //HubProxy.Invoke("Send", UserName, textBox1.Text);
                 HubProxy.Invoke("SendPrivateMessage", "dawid2", textBox1.Text);
             }
-            textBox1.Clear();
-
-            //textBox1.Text = String.Empty;
-            //textBox1.Focus();            
-        }
-        
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
+            textBox1.Clear();       
         }
 
-        private void klik_myszki(object sender, EventArgs e)
+        private void Mouse_Click(object sender, EventArgs e)
         {
+            int x, y;
             MouseEventArgs eM = (MouseEventArgs)e;
             x = (eM.X - 43) / 34;
             y = (eM.Y - 44) / 34;
@@ -172,7 +156,6 @@ namespace WindowsFormsApplication1
             Connection.Closed += Connection_Closed;
             HubProxy = Connection.CreateHubProxy("ChatHub");
             
-
             try
             {
                 await Connection.Start();
@@ -186,13 +169,16 @@ namespace WindowsFormsApplication1
 
             Log.Items.Add("Connected to server at " + ServerURI + "\r");
             HubProxy.Invoke("AddUser", UserName);
-            HubProxy.Invoke("GetUsersList", UserName);
+            //HubProxy.Invoke("GetUsersList", UserName);
+            HubProxy.Invoke("GetUsersList");
+            Czat.Items.Add("po get user: "+UserName);
             HubProxy.On<int,int>("GetCoordinates", (y, x)=>
                 {
                     textBox1.Text = "x: " + x + " y: " + y;
                 });
             HubProxy.On<List<UserDetail>>("SetUsersList", (ConnectedUsers2) =>
                 {
+                    Czat.Items.Add("spamikk");
                     ConnectedUsers = ConnectedUsers2;
                     GetActiveUsers();
                 });
@@ -202,6 +188,8 @@ namespace WindowsFormsApplication1
 
         private void GetActiveUsers()
          {
+             Czat.Items.Add("spamik");
+            //System.Threading.Thread.Sleep(1000);
             UsersList.Items.Add("Aktywnych: "+ConnectedUsers.Count+" graczy");
             for (int i = 0; i < ConnectedUsers.Count; i++)
                 UsersList.Items.Add(ConnectedUsers[i].UserName);

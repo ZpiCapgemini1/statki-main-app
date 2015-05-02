@@ -69,6 +69,12 @@ namespace WindowsFormsApplication1
                     }
                 }
             }
+            //usuwanie kropek ala obramowan
+            //zakomentowac kod = debug mode on
+            for (int i = 0; i < 10; i++)
+                for (int j = 0; j < 10; j++)
+                    if (plansza[j, i] == 5)
+                        plansza[j, i] = 0;
         }
 
         public void strzal()
