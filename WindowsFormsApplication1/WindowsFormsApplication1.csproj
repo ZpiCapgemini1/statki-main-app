@@ -121,6 +121,21 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="icons\0.png" />
+    <Content Include="icons\1.png" />
+    <Content Include="icons\2.png" />
+    <Content Include="icons\3.png" />
+    <Content Include="icons\4.png" />
+    <Content Include="icons\4s.png" />
+    <Content Include="icons\5.png" />
+    <Content Include="icons\blank .png" />
+    <Content Include="icons\ico.png" />
+    <Content Include="icons\kropa.png" />
+    <Content Include="icons\kułgo power.png" />
+    <Content Include="icons\statki ftw.png" />
+    <Content Include="icons\strzall.png" />
+    <Content Include="icons\x.png" />
+    <Content Include="icons\zatopiony.png" />
     <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
