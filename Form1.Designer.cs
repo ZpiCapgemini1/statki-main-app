@@ -29,6 +29,8 @@ namespace WindowsFormsApplication1
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.Log = new System.Windows.Forms.ListBox();
             this.Czat = new System.Windows.Forms.ListBox();
             this.wyslij = new System.Windows.Forms.Button();
@@ -36,14 +38,45 @@ namespace WindowsFormsApplication1
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.transparentMessagePanel1 = new WindowsFormsApplication1.TransparentMessagePanel();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.InitialImage = null;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 1);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(404, 403);
+            this.pictureBox1.TabIndex = 3;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.WaitOnLoad = true;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox3.BackgroundImage")));
+            this.pictureBox3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox3.ErrorImage = null;
+            this.pictureBox3.InitialImage = null;
+            this.pictureBox3.Location = new System.Drawing.Point(669, 1);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(404, 403);
+            this.pictureBox3.TabIndex = 9;
+            this.pictureBox3.TabStop = false;
+            this.pictureBox3.Visible = false;
+            this.pictureBox3.WaitOnLoad = true;
             // 
             // Log
             // 
-            this.Log.Cursor = System.Windows.Forms.Cursors.Default;
             this.Log.FormattingEnabled = true;
             this.Log.Location = new System.Drawing.Point(410, 12);
             this.Log.Name = "Log";
+            this.Log.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.Log.Size = new System.Drawing.Size(253, 147);
             this.Log.TabIndex = 10;
             // 
@@ -93,9 +126,9 @@ namespace WindowsFormsApplication1
             // 
             // transparentMessagePanel1
             // 
-            this.transparentMessagePanel1.Location = new System.Drawing.Point(0, 2);
+            this.transparentMessagePanel1.Location = new System.Drawing.Point(0, 1);
             this.transparentMessagePanel1.Name = "transparentMessagePanel1";
-            this.transparentMessagePanel1.Size = new System.Drawing.Size(400, 400);
+            this.transparentMessagePanel1.Size = new System.Drawing.Size(403, 403);
             this.transparentMessagePanel1.TabIndex = 16;
             // 
             // Form1
@@ -111,10 +144,14 @@ namespace WindowsFormsApplication1
             this.Controls.Add(this.wyslij);
             this.Controls.Add(this.Czat);
             this.Controls.Add(this.Log);
+            this.Controls.Add(this.pictureBox3);
+            this.Controls.Add(this.pictureBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -122,6 +159,8 @@ namespace WindowsFormsApplication1
 
         #endregion
 
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.ListBox Log;
         private System.Windows.Forms.ListBox Czat;
         private System.Windows.Forms.Button wyslij;
