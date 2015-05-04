@@ -35,7 +35,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.transparentMessagePanel1 = new WindowsFormsApplication1.TransparentMessagePanel();
+            this.TransparentPanel = new WindowsFormsApplication1.TransparentMessagePanel();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.UsersList = new System.Windows.Forms.ListBox();
@@ -94,12 +94,12 @@
             this.label3.TabIndex = 15;
             this.label3.Text = "Czat";
             // 
-            // transparentMessagePanel1
+            // TransparentPanel
             // 
-            this.transparentMessagePanel1.Location = new System.Drawing.Point(0, 2);
-            this.transparentMessagePanel1.Name = "transparentMessagePanel1";
-            this.transparentMessagePanel1.Size = new System.Drawing.Size(400, 400);
-            this.transparentMessagePanel1.TabIndex = 16;
+            this.TransparentPanel.Location = new System.Drawing.Point(0, 2);
+            this.TransparentPanel.Name = "TransparentPanel";
+            this.TransparentPanel.Size = new System.Drawing.Size(400, 400);
+            this.TransparentPanel.TabIndex = 16;
             // 
             // textBox2
             // 
@@ -135,7 +135,7 @@
             this.Controls.Add(this.UsersList);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.transparentMessagePanel1);
+            this.Controls.Add(this.TransparentPanel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox1);
@@ -159,7 +159,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private TransparentMessagePanel transparentMessagePanel1;
+        private TransparentMessagePanel TransparentPanel;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ListBox UsersList;

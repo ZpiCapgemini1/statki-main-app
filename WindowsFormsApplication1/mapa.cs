@@ -8,8 +8,8 @@ namespace WindowsFormsApplication1
 {
     class mapa
     {
-        private int[,] plansza;// = new int[10, 10];
-        private Random rand;// = new Random();
+        private int[,] plansza;
+        private Random rand;
 
         public mapa()
         {
@@ -81,14 +81,6 @@ namespace WindowsFormsApplication1
         {
 
         }
-
-       /* public bool czyWin()
-        {
-            if (licznik == 20)
-                return true;
-            else
-                return false;
-        }*/
 
         private bool czyPionowy()
         {
