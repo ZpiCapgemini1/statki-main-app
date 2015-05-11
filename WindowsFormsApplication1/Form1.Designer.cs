@@ -29,70 +29,111 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.Log = new System.Windows.Forms.ListBox();
-            this.Czat = new System.Windows.Forms.ListBox();
-            this.wyslij = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lb_Log = new System.Windows.Forms.ListBox();
+            this.lb_Czat = new System.Windows.Forms.ListBox();
+            this.b_Wyslij = new System.Windows.Forms.Button();
+            this.tb_Czat = new System.Windows.Forms.TextBox();
+            this.label_Log = new System.Windows.Forms.Label();
+            this.label_Czat = new System.Windows.Forms.Label();
+            this.tb_NickGracza = new System.Windows.Forms.TextBox();
+            this.b_Polacz = new System.Windows.Forms.Button();
+            this.lb_ListaGraczy = new System.Windows.Forms.ListBox();
+            this.b_Graj = new System.Windows.Forms.Button();
             this.TransparentPanel = new WindowsFormsApplication1.TransparentMessagePanel();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.UsersList = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
-            // Log
+            // lb_Log
             // 
-            this.Log.Cursor = System.Windows.Forms.Cursors.Default;
-            this.Log.FormattingEnabled = true;
-            this.Log.Location = new System.Drawing.Point(410, 12);
-            this.Log.Name = "Log";
-            this.Log.Size = new System.Drawing.Size(253, 147);
-            this.Log.TabIndex = 10;
+            this.lb_Log.Cursor = System.Windows.Forms.Cursors.Default;
+            this.lb_Log.FormattingEnabled = true;
+            this.lb_Log.Location = new System.Drawing.Point(410, 12);
+            this.lb_Log.Name = "lb_Log";
+            this.lb_Log.Size = new System.Drawing.Size(253, 147);
+            this.lb_Log.TabIndex = 10;
             // 
-            // Czat
+            // lb_Czat
             // 
-            this.Czat.FormattingEnabled = true;
-            this.Czat.Location = new System.Drawing.Point(410, 180);
-            this.Czat.Name = "Czat";
-            this.Czat.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.Czat.Size = new System.Drawing.Size(253, 173);
-            this.Czat.TabIndex = 11;
+            this.lb_Czat.FormattingEnabled = true;
+            this.lb_Czat.Location = new System.Drawing.Point(410, 180);
+            this.lb_Czat.Name = "lb_Czat";
+            this.lb_Czat.SelectionMode = System.Windows.Forms.SelectionMode.None;
+            this.lb_Czat.Size = new System.Drawing.Size(253, 173);
+            this.lb_Czat.TabIndex = 11;
+            this.lb_Czat.Visible = false;
             // 
-            // wyslij
+            // b_Wyslij
             // 
-            this.wyslij.Location = new System.Drawing.Point(590, 359);
-            this.wyslij.Name = "wyslij";
-            this.wyslij.Size = new System.Drawing.Size(73, 27);
-            this.wyslij.TabIndex = 12;
-            this.wyslij.Text = "Wyślij";
-            this.wyslij.UseVisualStyleBackColor = true;
-            this.wyslij.Click += new System.EventHandler(this.wyslij_Click);
+            this.b_Wyslij.Location = new System.Drawing.Point(590, 359);
+            this.b_Wyslij.Name = "b_Wyslij";
+            this.b_Wyslij.Size = new System.Drawing.Size(73, 27);
+            this.b_Wyslij.TabIndex = 12;
+            this.b_Wyslij.Text = "Wyślij";
+            this.b_Wyslij.UseVisualStyleBackColor = true;
+            this.b_Wyslij.Visible = false;
+            this.b_Wyslij.Click += new System.EventHandler(this.b_Wyslij_Click);
             // 
-            // textBox1
+            // tb_Czat
             // 
-            this.textBox1.Location = new System.Drawing.Point(412, 362);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(167, 20);
-            this.textBox1.TabIndex = 13;
+            this.tb_Czat.Location = new System.Drawing.Point(412, 362);
+            this.tb_Czat.Name = "tb_Czat";
+            this.tb_Czat.Size = new System.Drawing.Size(167, 20);
+            this.tb_Czat.TabIndex = 13;
+            this.tb_Czat.Visible = false;
             // 
-            // label2
+            // label_Log
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(410, 1);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(25, 13);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "Log";
+            this.label_Log.AutoSize = true;
+            this.label_Log.Location = new System.Drawing.Point(410, 1);
+            this.label_Log.Name = "label_Log";
+            this.label_Log.Size = new System.Drawing.Size(25, 13);
+            this.label_Log.TabIndex = 14;
+            this.label_Log.Text = "Log";
             // 
-            // label3
+            // label_Czat
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(409, 170);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(28, 13);
-            this.label3.TabIndex = 15;
-            this.label3.Text = "Czat";
+            this.label_Czat.AutoSize = true;
+            this.label_Czat.Location = new System.Drawing.Point(409, 170);
+            this.label_Czat.Name = "label_Czat";
+            this.label_Czat.Size = new System.Drawing.Size(28, 13);
+            this.label_Czat.TabIndex = 15;
+            this.label_Czat.Text = "Czat";
+            this.label_Czat.Visible = false;
+            // 
+            // tb_NickGracza
+            // 
+            this.tb_NickGracza.Location = new System.Drawing.Point(425, 186);
+            this.tb_NickGracza.Name = "tb_NickGracza";
+            this.tb_NickGracza.Size = new System.Drawing.Size(100, 20);
+            this.tb_NickGracza.TabIndex = 17;
+            // 
+            // b_Polacz
+            // 
+            this.b_Polacz.Location = new System.Drawing.Point(531, 183);
+            this.b_Polacz.Name = "b_Polacz";
+            this.b_Polacz.Size = new System.Drawing.Size(75, 23);
+            this.b_Polacz.TabIndex = 18;
+            this.b_Polacz.Text = "Połącz";
+            this.b_Polacz.UseVisualStyleBackColor = true;
+            this.b_Polacz.Click += new System.EventHandler(this.b_Polacz_Click);
+            // 
+            // lb_ListaGraczy
+            // 
+            this.lb_ListaGraczy.FormattingEnabled = true;
+            this.lb_ListaGraczy.Location = new System.Drawing.Point(425, 212);
+            this.lb_ListaGraczy.Name = "lb_ListaGraczy";
+            this.lb_ListaGraczy.Size = new System.Drawing.Size(183, 121);
+            this.lb_ListaGraczy.TabIndex = 19;
+            // 
+            // b_Graj
+            // 
+            this.b_Graj.Location = new System.Drawing.Point(531, 183);
+            this.b_Graj.Name = "b_Graj";
+            this.b_Graj.Size = new System.Drawing.Size(75, 23);
+            this.b_Graj.TabIndex = 20;
+            this.b_Graj.Text = "Graj";
+            this.b_Graj.UseVisualStyleBackColor = true;
+            this.b_Graj.Visible = false;
+            this.b_Graj.Click += new System.EventHandler(this.b_Graj_Click);
             // 
             // TransparentPanel
             // 
@@ -100,31 +141,7 @@
             this.TransparentPanel.Name = "TransparentPanel";
             this.TransparentPanel.Size = new System.Drawing.Size(400, 400);
             this.TransparentPanel.TabIndex = 16;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(412, 411);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 17;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(518, 408);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 18;
-            this.button1.Text = "Connect";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // UsersList
-            // 
-            this.UsersList.FormattingEnabled = true;
-            this.UsersList.Location = new System.Drawing.Point(410, 438);
-            this.UsersList.Name = "UsersList";
-            this.UsersList.Size = new System.Drawing.Size(183, 82);
-            this.UsersList.TabIndex = 19;
+            this.TransparentPanel.Visible = false;
             // 
             // Form1
             // 
@@ -132,16 +149,17 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ClientSize = new System.Drawing.Size(1073, 524);
-            this.Controls.Add(this.UsersList);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.b_Graj);
+            this.Controls.Add(this.lb_ListaGraczy);
+            this.Controls.Add(this.b_Polacz);
+            this.Controls.Add(this.tb_NickGracza);
             this.Controls.Add(this.TransparentPanel);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.wyslij);
-            this.Controls.Add(this.Czat);
-            this.Controls.Add(this.Log);
+            this.Controls.Add(this.label_Czat);
+            this.Controls.Add(this.label_Log);
+            this.Controls.Add(this.tb_Czat);
+            this.Controls.Add(this.b_Wyslij);
+            this.Controls.Add(this.lb_Czat);
+            this.Controls.Add(this.lb_Log);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Form1";
@@ -153,16 +171,17 @@
 
         #endregion
 
-        private System.Windows.Forms.ListBox Log;
-        private System.Windows.Forms.ListBox Czat;
-        private System.Windows.Forms.Button wyslij;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ListBox lb_Log;
+        private System.Windows.Forms.ListBox lb_Czat;
+        private System.Windows.Forms.Button b_Wyslij;
+        private System.Windows.Forms.TextBox tb_Czat;
+        private System.Windows.Forms.Label label_Log;
+        private System.Windows.Forms.Label label_Czat;
         private TransparentMessagePanel TransparentPanel;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ListBox UsersList;
+        private System.Windows.Forms.TextBox tb_NickGracza;
+        private System.Windows.Forms.Button b_Polacz;
+        private System.Windows.Forms.ListBox lb_ListaGraczy;
+        private System.Windows.Forms.Button b_Graj;
     }
 }
 
