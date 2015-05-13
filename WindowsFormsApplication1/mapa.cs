@@ -25,6 +25,14 @@ namespace WindowsFormsApplication1
             return plansza[y, x];
         }
 
+        public bool strzal(int x,int y)
+        {
+            if (plansza[y, x] == 0)
+                return false;
+            else
+                return true;
+        }
+
         public void randomRozstaw()
         {
             bool flaga;
@@ -77,10 +85,6 @@ namespace WindowsFormsApplication1
                         plansza[j, i] = 0;
         }
 
-        public void strzal()
-        {
-
-        }
 
         private bool czyPionowy()
         {

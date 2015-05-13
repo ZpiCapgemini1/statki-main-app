@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
-//using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http;
 using Microsoft.AspNet.SignalR.Client;
@@ -23,17 +22,22 @@ namespace WindowsFormsApplication1
         public static List<UserDetail> ConnectedUsers = new List<UserDetail>();
         //==importy
         
-        mapa MojaPlansza = new mapa();
-        PictureBox[,] PBPrzeciwnika = new PictureBox[10,10];
-        PictureBox[,] PBMoje = new PictureBox[10, 10];	
-        PictureBox PrawaStrona = new PictureBox();
-        PictureBox LewaStrona = new PictureBox();
-        Thread th;
-        string NickPrzeciwnika;
+        private mapa MojaPlansza;// = new mapa();
+        private PictureBox[,] PBPrzeciwnika;// = new PictureBox[10, 10];
+        private PictureBox[,] PBMoje;// = new PictureBox[10, 10];
+        private PictureBox PrawaStrona;// = new PictureBox();
+        private PictureBox LewaStrona;// = new PictureBox();
+        private Thread th;
+        private string NickPrzeciwnika;
 
         public Form1()
         {
             InitializeComponent();
+            MojaPlansza = new mapa();
+            PBPrzeciwnika = new PictureBox[10, 10];
+            PBMoje = new PictureBox[10, 10];
+            PrawaStrona = new PictureBox();
+            LewaStrona = new PictureBox();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -58,11 +62,11 @@ namespace WindowsFormsApplication1
             {
                 if (x >= 0 && x < 10 && y >= 0 && y < 10)
                 {
-                    lb_Log.Items.Add("Stzal na   x: " + (x + 1).ToString() + " y: " + (y + 1).ToString());
+                    lb_Log.Items.Add("Ty strzelasz x: " + (x + 1).ToString() + " y: " + (y + 1).ToString());
                     lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
                     lb_Log.SelectedIndex = -1;
                     HubProxy.Invoke("SendCoordinates", NickPrzeciwnika, y, x);
-                    PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
+                    //PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
                 }
             }
         }
@@ -151,6 +155,7 @@ namespace WindowsFormsApplication1
             b_Graj.Enabled = false;
             b_Graj.Visible = false;
             TransparentPanel.Visible = true;
+            lb_Log.Items.Clear();
             //========== zmiana UI ==========
         }
 
@@ -223,9 +228,36 @@ namespace WindowsFormsApplication1
             th.IsBackground = true;     //liste graczy co 8 sekund
             th.Start();
 
-            HubProxy.On<int,int>("GetCoordinates", (y, x)=>     //funkcja wykonuje sie po strzale przeciwnika
+            HubProxy.On<int, int>("GetCoordinates", (y, x)=>     //funkcja wykonuje sie po strzale przeciwnika
                 {
-                    tb_Czat.Text = "x: " + x + " y: " + y;
+                    lb_Log.Items.Add("Przeciwnik strzela x: " + (x + 1) + " y: " + (y + 1));
+                    if (!MojaPlansza.strzal(x,y))
+                    {
+                        PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
+                        lb_Log.Items.Add("WODA!");
+                        HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, 0, y, x);
+                    }
+                    else
+                    {
+                        PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
+                        lb_Log.Items.Add("TRAFIONY!");
+                        HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, 1, y, x);
+                    }
+
+                });
+
+            HubProxy.On<int, int, int>("GetSinkInfo", (y, x, z) =>
+                {
+                    if(z==1)
+                    {
+                        PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
+                        lb_Log.Items.Add("TRAFIONY!");
+                    }
+                    if(z==0)
+                    {
+                        PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
+                        lb_Log.Items.Add("WODA!");
+                    }
                 });
 
             HubProxy.On<List<UserDetail>>("SetUsersList", (ConnectedUsers2) =>      //po zazadaniu aktualizacji listy aktywnych
@@ -256,7 +288,7 @@ namespace WindowsFormsApplication1
         }
 
         //po 30s z automatu sie wylaczy
-        void Connection_Closed()
+        private void Connection_Closed()
         {
             lb_Log.Items.Add("Halo halo mamy problem z połączeniem!");
         }
