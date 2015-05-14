@@ -62,6 +62,7 @@ namespace WindowsFormsApplication1
             {
                 if (x >= 0 && x < 10 && y >= 0 && y < 10)
                 {
+                    TransparentPanel.Visible = false;
                     lb_Log.Items.Add("Ty strzelasz x: " + (x + 1).ToString() + " y: " + (y + 1).ToString());
                     lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
                     lb_Log.SelectedIndex = -1;
@@ -236,6 +237,8 @@ namespace WindowsFormsApplication1
                         PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
                         lb_Log.Items.Add("WODA!");
                         HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, 0, y, x);
+                        MessageBox.Show("Twoj ruch!");
+                        TransparentPanel.Visible = true;
                     }
                     else
                     {
@@ -250,6 +253,7 @@ namespace WindowsFormsApplication1
                 {
                     if(z==1)
                     {
+                        TransparentPanel.Visible = true;
                         PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
                         lb_Log.Items.Add("TRAFIONY!");
                     }
@@ -257,6 +261,7 @@ namespace WindowsFormsApplication1
                     {
                         PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
                         lb_Log.Items.Add("WODA!");
+                        MessageBox.Show("Ruch przeciwnika");
                     }
                 });
 
