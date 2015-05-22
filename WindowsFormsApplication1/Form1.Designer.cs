@@ -39,7 +39,13 @@
             this.b_Polacz = new System.Windows.Forms.Button();
             this.lb_ListaGraczy = new System.Windows.Forms.ListBox();
             this.b_Graj = new System.Windows.Forms.Button();
+            this.label_Nick = new System.Windows.Forms.Label();
+            this.label_Lista = new System.Windows.Forms.Label();
+            this.label_Graj = new System.Windows.Forms.Label();
+            this.pb_Tura = new System.Windows.Forms.PictureBox();
+            this.label_Tura = new System.Windows.Forms.Label();
             this.TransparentPanel = new WindowsFormsApplication1.TransparentMessagePanel();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Tura)).BeginInit();
             this.SuspendLayout();
             // 
             // lb_Log
@@ -48,13 +54,13 @@
             this.lb_Log.FormattingEnabled = true;
             this.lb_Log.Location = new System.Drawing.Point(410, 12);
             this.lb_Log.Name = "lb_Log";
-            this.lb_Log.Size = new System.Drawing.Size(253, 147);
+            this.lb_Log.Size = new System.Drawing.Size(253, 108);
             this.lb_Log.TabIndex = 10;
             // 
             // lb_Czat
             // 
             this.lb_Czat.FormattingEnabled = true;
-            this.lb_Czat.Location = new System.Drawing.Point(410, 180);
+            this.lb_Czat.Location = new System.Drawing.Point(406, 145);
             this.lb_Czat.Name = "lb_Czat";
             this.lb_Czat.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.lb_Czat.Size = new System.Drawing.Size(253, 173);
@@ -63,7 +69,7 @@
             // 
             // b_Wyslij
             // 
-            this.b_Wyslij.Location = new System.Drawing.Point(590, 359);
+            this.b_Wyslij.Location = new System.Drawing.Point(590, 324);
             this.b_Wyslij.Name = "b_Wyslij";
             this.b_Wyslij.Size = new System.Drawing.Size(73, 27);
             this.b_Wyslij.TabIndex = 12;
@@ -74,7 +80,7 @@
             // 
             // tb_Czat
             // 
-            this.tb_Czat.Location = new System.Drawing.Point(412, 362);
+            this.tb_Czat.Location = new System.Drawing.Point(413, 324);
             this.tb_Czat.Name = "tb_Czat";
             this.tb_Czat.Size = new System.Drawing.Size(167, 20);
             this.tb_Czat.TabIndex = 13;
@@ -92,7 +98,7 @@
             // label_Czat
             // 
             this.label_Czat.AutoSize = true;
-            this.label_Czat.Location = new System.Drawing.Point(409, 170);
+            this.label_Czat.Location = new System.Drawing.Point(410, 136);
             this.label_Czat.Name = "label_Czat";
             this.label_Czat.Size = new System.Drawing.Size(28, 13);
             this.label_Czat.TabIndex = 15;
@@ -119,14 +125,14 @@
             // lb_ListaGraczy
             // 
             this.lb_ListaGraczy.FormattingEnabled = true;
-            this.lb_ListaGraczy.Location = new System.Drawing.Point(425, 212);
+            this.lb_ListaGraczy.Location = new System.Drawing.Point(425, 230);
             this.lb_ListaGraczy.Name = "lb_ListaGraczy";
             this.lb_ListaGraczy.Size = new System.Drawing.Size(183, 121);
             this.lb_ListaGraczy.TabIndex = 19;
             // 
             // b_Graj
             // 
-            this.b_Graj.Location = new System.Drawing.Point(531, 183);
+            this.b_Graj.Location = new System.Drawing.Point(477, 368);
             this.b_Graj.Name = "b_Graj";
             this.b_Graj.Size = new System.Drawing.Size(75, 23);
             this.b_Graj.TabIndex = 20;
@@ -134,6 +140,51 @@
             this.b_Graj.UseVisualStyleBackColor = true;
             this.b_Graj.Visible = false;
             this.b_Graj.Click += new System.EventHandler(this.b_Graj_Click);
+            // 
+            // label_Nick
+            // 
+            this.label_Nick.AutoSize = true;
+            this.label_Nick.Location = new System.Drawing.Point(432, 172);
+            this.label_Nick.Name = "label_Nick";
+            this.label_Nick.Size = new System.Drawing.Size(83, 13);
+            this.label_Nick.TabIndex = 21;
+            this.label_Nick.Text = "Wpisz swój nick";
+            // 
+            // label_Lista
+            // 
+            this.label_Lista.AutoSize = true;
+            this.label_Lista.Location = new System.Drawing.Point(435, 217);
+            this.label_Lista.Name = "label_Lista";
+            this.label_Lista.Size = new System.Drawing.Size(117, 13);
+            this.label_Lista.TabIndex = 22;
+            this.label_Lista.Text = "Lista aktywnych graczy";
+            // 
+            // label_Graj
+            // 
+            this.label_Graj.AutoSize = true;
+            this.label_Graj.Location = new System.Drawing.Point(410, 352);
+            this.label_Graj.Name = "label_Graj";
+            this.label_Graj.Size = new System.Drawing.Size(232, 13);
+            this.label_Graj.TabIndex = 23;
+            this.label_Graj.Text = "Wybierz przeciwnika z listy i wciśnij przycisk graj";
+            // 
+            // pb_Tura
+            // 
+            this.pb_Tura.Location = new System.Drawing.Point(413, 375);
+            this.pb_Tura.Name = "pb_Tura";
+            this.pb_Tura.Size = new System.Drawing.Size(30, 30);
+            this.pb_Tura.TabIndex = 24;
+            this.pb_Tura.TabStop = false;
+            // 
+            // label_Tura
+            // 
+            this.label_Tura.AutoSize = true;
+            this.label_Tura.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label_Tura.Location = new System.Drawing.Point(449, 382);
+            this.label_Tura.Name = "label_Tura";
+            this.label_Tura.Size = new System.Drawing.Size(46, 17);
+            this.label_Tura.TabIndex = 25;
+            this.label_Tura.Text = "label1";
             // 
             // TransparentPanel
             // 
@@ -148,7 +199,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(1073, 524);
+            this.ClientSize = new System.Drawing.Size(1073, 416);
+            this.Controls.Add(this.label_Tura);
+            this.Controls.Add(this.pb_Tura);
+            this.Controls.Add(this.label_Graj);
+            this.Controls.Add(this.label_Lista);
+            this.Controls.Add(this.label_Nick);
             this.Controls.Add(this.b_Graj);
             this.Controls.Add(this.lb_ListaGraczy);
             this.Controls.Add(this.b_Polacz);
@@ -164,6 +220,7 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Tura)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -182,6 +239,11 @@
         private System.Windows.Forms.Button b_Polacz;
         private System.Windows.Forms.ListBox lb_ListaGraczy;
         private System.Windows.Forms.Button b_Graj;
+        private System.Windows.Forms.Label label_Nick;
+        private System.Windows.Forms.Label label_Lista;
+        private System.Windows.Forms.Label label_Graj;
+        private System.Windows.Forms.PictureBox pb_Tura;
+        private System.Windows.Forms.Label label_Tura;
     }
 }
 

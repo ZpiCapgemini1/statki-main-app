@@ -14,21 +14,22 @@ namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
-        //==importy
+        //==SignalR==
         public String UserName { get; set; }
         public IHubProxy HubProxy { get; set; }
         const string ServerURI = "http://zpicapgemini2.azurewebsites.net/";
         public HubConnection Connection { get; set; }
         public static List<UserDetail> ConnectedUsers = new List<UserDetail>();
-        //==importy
+        //==SignalR==
         
-        private mapa MojaPlansza;// = new mapa();
-        private PictureBox[,] PBPrzeciwnika;// = new PictureBox[10, 10];
-        private PictureBox[,] PBMoje;// = new PictureBox[10, 10];
-        private PictureBox PrawaStrona;// = new PictureBox();
-        private PictureBox LewaStrona;// = new PictureBox();
+        private mapa MojaPlansza;
+        private PictureBox[,] PBPrzeciwnika;
+        private PictureBox[,] PBMoje;
+        private PictureBox PrawaStrona;
+        private PictureBox LewaStrona;
         private Thread th;
         private string NickPrzeciwnika;
+        private bool TrwaGra;
 
         public Form1()
         {
@@ -38,6 +39,7 @@ namespace WindowsFormsApplication1
             PBMoje = new PictureBox[10, 10];
             PrawaStrona = new PictureBox();
             LewaStrona = new PictureBox();
+            TrwaGra = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -48,6 +50,13 @@ namespace WindowsFormsApplication1
             updateMapy();
             tb_Czat.Enabled = false;
             b_Wyslij.Enabled = false;
+            lb_ListaGraczy.Enabled = false;
+            lb_ListaGraczy.Visible = false;
+            label_Graj.Visible = false;
+            label_Lista.Visible = false;
+            label_Tura.Visible = false;
+            pb_Tura.Enabled = false;
+            pb_Tura.Visible = false;
         }
 
         //========== funkcje związane z widocznymi obiektami (buttony, panel itp) ==========
@@ -87,14 +96,22 @@ namespace WindowsFormsApplication1
             if (!String.IsNullOrEmpty(tb_NickGracza.Text))
             {
                 UserName = tb_NickGracza.Text;
-                tb_NickGracza.Enabled = false;
-                lb_Log.Items.Add("Connecting to server...");
                 ConnectAsync();
+
+                tb_NickGracza.Enabled = false;
+
+                lb_Log.Items.Add("Łączę z serwerem...");
+                lb_ListaGraczy.Enabled = true;
+                lb_ListaGraczy.Visible = true;
+
                 b_Polacz.Enabled = false;
                 b_Polacz.Visible = false;
                 b_Graj.Enabled = true;
                 b_Graj.Visible = true;
 
+                label_Lista.Visible = true;
+                label_Graj.Visible = true;
+                label_Nick.Text = "Twój nick";
             }
         }
 
@@ -141,22 +158,37 @@ namespace WindowsFormsApplication1
         {
             //========== logika ==========
             th.Abort();
+            TrwaGra = true;
             //========== logika ==========
 
             //========== zmiana UI ==========
             tb_NickGracza.Visible = false;
-            lb_ListaGraczy.Enabled = false;
-            lb_ListaGraczy.Visible = false;
-            label_Czat.Visible = true;
-            lb_Czat.Visible = true;
             tb_Czat.Visible = true;
             tb_Czat.Enabled = true;
+            
+            lb_ListaGraczy.Enabled = false;
+            lb_ListaGraczy.Visible = false;
+            lb_Czat.Visible = true;
+            lb_Log.Items.Clear();
+
+            label_Czat.Visible = true;
+            label_Graj.Visible = false;
+            label_Nick.Visible = false;
+            label_Lista.Visible = false;
+            label_Tura.Text = "Twój ruch!";
+            label_Tura.Visible = true;
+
             b_Wyslij.Visible = true;
             b_Wyslij.Enabled = true;
             b_Graj.Enabled = false;
             b_Graj.Visible = false;
+
+            pb_Tura.Enabled = true;
+            pb_Tura.Visible = true;
+            pb_Tura.BackColor = Color.Green;
             TransparentPanel.Visible = true;
-            lb_Log.Items.Clear();
+            //kontrolka tury!
+
             //========== zmiana UI ==========
         }
 
@@ -168,7 +200,7 @@ namespace WindowsFormsApplication1
             {
                 if (x > 6)
                     offsetX = 3;                    //magia, nie czytaj
-                for (int y = 0; y < 10; y++)        //bo i tak nie zrozumiesz xD
+                for (int y = 0; y < 10; y++)
                 {
                     if (y >= 3)
                         offsetY = 4;
@@ -217,12 +249,13 @@ namespace WindowsFormsApplication1
             }
             catch (HttpRequestException)
             {
-                lb_Log.Items.Add("Unable to connect to server: Start server before connecting clients.");
+                lb_Log.Items.Add("Nie można połączyć się z serwerem.");
                 return;
             }
 
-            lb_Log.Items.Add("Connected to server at " + ServerURI + "\r"); //połączenie z serwerem
-            HubProxy.Invoke("AddUser", UserName);                           //i dodanie siebie jako gracza
+            lb_Log.Items.Add("Połączono!");         //połączenie z serwerem
+            lb_Log.Items.Add("");                   //i dodanie siebie jako gracza
+            HubProxy.Invoke("AddUser", UserName);
             
 
             th = new Thread(odswiez);   //odpalamy watek ktory odswieza
@@ -237,7 +270,9 @@ namespace WindowsFormsApplication1
                         PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
                         lb_Log.Items.Add("WODA!");
                         HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, 0, y, x);
-                        MessageBox.Show("Twoj ruch!");
+                        label_Tura.Text = "Twój ruch!";
+                        pb_Tura.BackColor = Color.Green;
+                        label_Tura.ForeColor = Color.Green;
                         TransparentPanel.Visible = true;
                     }
                     else
@@ -261,7 +296,9 @@ namespace WindowsFormsApplication1
                     {
                         PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
                         lb_Log.Items.Add("WODA!");
-                        MessageBox.Show("Ruch przeciwnika");
+                        label_Tura.Text = "Ruch przeciwnika!";
+                        pb_Tura.BackColor = Color.Red;
+                        label_Tura.ForeColor = Color.Red;
                     }
                 });
 
