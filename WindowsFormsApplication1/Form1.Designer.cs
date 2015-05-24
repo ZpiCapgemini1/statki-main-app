@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApplication1
+﻿namespace Statki
 {
     partial class Form1
     {
@@ -44,7 +44,7 @@
             this.label_Graj = new System.Windows.Forms.Label();
             this.pb_Tura = new System.Windows.Forms.PictureBox();
             this.label_Tura = new System.Windows.Forms.Label();
-            this.TransparentPanel = new WindowsFormsApplication1.TransparentMessagePanel();
+            this.TransparentPanel = new Statki.TransparentMessagePanel();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Tura)).BeginInit();
             this.SuspendLayout();
             // 

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Net.Http;
 using Microsoft.AspNet.SignalR.Client;
 
-namespace WindowsFormsApplication1
+namespace Statki
 {
     public partial class Form1 : Form
     {
@@ -30,6 +30,9 @@ namespace WindowsFormsApplication1
         private Thread th;
         private string NickPrzeciwnika;
         private bool TrwaGra;
+        private bool Strzal;
+        private int licznikWin;
+        private int licznikLoose;
 
         public Form1()
         {
@@ -62,21 +65,26 @@ namespace WindowsFormsApplication1
         //========== funkcje związane z widocznymi obiektami (buttony, panel itp) ==========
         private void Mouse_Click(object sender, EventArgs e)
         {
-            int x, y;
-            MouseEventArgs eM = (MouseEventArgs)e;
-            x = (eM.X - 43) / 34;
-            y = (eM.Y - 44) / 34;
-
-            if (eM.X > 40 && eM.Y > 40)
+            if (Strzal == true)
             {
-                if (x >= 0 && x < 10 && y >= 0 && y < 10)
+                int x, y;
+                MouseEventArgs eM = (MouseEventArgs)e;
+                x = (eM.X - 43) / 34;
+                y = (eM.Y - 44) / 34;
+
+                if (eM.X > 40 && eM.Y > 40)
                 {
-                    TransparentPanel.Visible = false;
-                    lb_Log.Items.Add("Ty strzelasz x: " + (x + 1).ToString() + " y: " + (y + 1).ToString());
-                    lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
-                    lb_Log.SelectedIndex = -1;
-                    HubProxy.Invoke("SendCoordinates", NickPrzeciwnika, y, x);
-                    //PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
+                    if (x >= 0 && x < 10 && y >= 0 && y < 10)
+                    {
+                        if (PBPrzeciwnika[y, x].BackgroundImage == null)
+                        {
+                            Strzal = false;
+                            lb_Log.Items.Add("Ty strzelasz x: " + (x + 1).ToString() + " y: " + (y + 1).ToString());
+                            lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
+                            lb_Log.SelectedIndex = -1;
+                            HubProxy.Invoke("SendCoordinates", NickPrzeciwnika, y, x);
+                        }
+                    }
                 }
             }
         }
@@ -172,12 +180,11 @@ namespace WindowsFormsApplication1
             lb_Log.Items.Clear();
 
             label_Czat.Visible = true;
+            label_Tura.Visible = true;
             label_Graj.Visible = false;
             label_Nick.Visible = false;
             label_Lista.Visible = false;
-            label_Tura.Text = "Twój ruch!";
-            label_Tura.Visible = true;
-
+            
             b_Wyslij.Visible = true;
             b_Wyslij.Enabled = true;
             b_Graj.Enabled = false;
@@ -185,11 +192,58 @@ namespace WindowsFormsApplication1
 
             pb_Tura.Enabled = true;
             pb_Tura.Visible = true;
-            pb_Tura.BackColor = Color.Green;
             TransparentPanel.Visible = true;
-            //kontrolka tury!
-
             //========== zmiana UI ==========
+
+            //kto zaczyna? :D
+            if(zaczynasz())
+            {
+                pb_Tura.BackColor = Color.Green;
+                label_Tura.Text = "Twój ruch!";
+                Strzal = true;
+            }
+            else
+            {
+                pb_Tura.BackColor = Color.Red;
+                label_Tura.Text = "Ruch przeciwnika!";
+                Strzal = false;
+            }
+            //kto zaczyna? :D
+
+            
+        }
+
+        private bool zaczynasz()
+        {
+            int ja=0;
+            int przeciwnik=0;
+
+            foreach (var o in UserName)
+                ja += o;
+
+            foreach (var o in NickPrzeciwnika)
+                przeciwnik += o;
+
+            if (ja > przeciwnik)
+                return true;
+            else
+                return false;
+        }
+
+        private void czy_win()
+        {
+            if(licznikWin==20)
+            {
+                MessageBox.Show("Wygrałeś grę!");
+            }
+        }
+
+        private void czy_loose()
+        {
+            if(licznikLoose==20)
+            {
+                MessageBox.Show("Przegrałeś grę!");
+            }
         }
 
        private void generowanie_grafiki()
@@ -259,7 +313,7 @@ namespace WindowsFormsApplication1
             
 
             th = new Thread(odswiez);   //odpalamy watek ktory odswieza
-            th.IsBackground = true;     //liste graczy co 8 sekund
+            th.IsBackground = true;     //liste graczy co 2 sekundy
             th.Start();
 
             HubProxy.On<int, int>("GetCoordinates", (y, x)=>     //funkcja wykonuje sie po strzale przeciwnika
@@ -273,13 +327,18 @@ namespace WindowsFormsApplication1
                         label_Tura.Text = "Twój ruch!";
                         pb_Tura.BackColor = Color.Green;
                         label_Tura.ForeColor = Color.Green;
-                        TransparentPanel.Visible = true;
+                        Strzal = true;
+                        lb_Log.Items.Add("tu sie wali");
+                        Thread.Sleep(1000);
+                        lb_Log.Items.Add("po 1 sec");
                     }
                     else
                     {
                         PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
                         lb_Log.Items.Add("TRAFIONY!");
                         HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, 1, y, x);
+                        licznikLoose++;
+                        czy_loose();
                     }
 
                 });
@@ -288,9 +347,11 @@ namespace WindowsFormsApplication1
                 {
                     if(z==1)
                     {
-                        TransparentPanel.Visible = true;
+                        Strzal = true;
                         PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
                         lb_Log.Items.Add("TRAFIONY!");
+                        licznikWin++;
+                        czy_win();
                     }
                     if(z==0)
                     {
@@ -315,17 +376,26 @@ namespace WindowsFormsApplication1
         private void GetActiveUsers()
          {
             lb_Log.Items[lb_Log.Items.Count -1] = "Aktywnych: " + ConnectedUsers.Count + " graczy";
+            string temp = null;
+
+            if(lb_ListaGraczy.SelectedIndex != -1)
+                temp = lb_ListaGraczy.SelectedItem.ToString();
+
             lb_ListaGraczy.Items.Clear();
+            
             for (int i = 0; i < ConnectedUsers.Count; i++)
                 lb_ListaGraczy.Items.Add(ConnectedUsers[i].UserName);
+
+            if(!string.IsNullOrEmpty(temp))
+                lb_ListaGraczy.SelectedIndex=lb_ListaGraczy.FindString(temp);
         }
 
         private void odswiez()
         {
             while (true)                    //watek odswieza liste
-            {                               //graczy co 8 sekund
+            {                               //graczy co 2 sekundy
                 HubProxy.Invoke("GetUsersList");
-                System.Threading.Thread.Sleep(8000);
+                System.Threading.Thread.Sleep(2000);
             }
         }
 
