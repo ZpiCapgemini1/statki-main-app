@@ -17,12 +17,13 @@ namespace Statki
         //==SignalR==
         public String UserName { get; set; }
         public IHubProxy HubProxy { get; set; }
-        const string ServerURI = "http://zpicapgemini2.azurewebsites.net/";
+        const string ServerURI = "http://zpicapgemini3.azurewebsites.net/";
         public HubConnection Connection { get; set; }
         public static List<UserDetail> ConnectedUsers = new List<UserDetail>();
         //==SignalR==
         
-        private mapa MojaPlansza;
+        private mapa MapaMoja;
+        private mapa MapaPrzeciwnika;
         private PictureBox[,] PBPrzeciwnika;
         private PictureBox[,] PBMoje;
         private PictureBox PrawaStrona;
@@ -37,7 +38,8 @@ namespace Statki
         public Form1()
         {
             InitializeComponent();
-            MojaPlansza = new mapa();
+            MapaMoja = new mapa();
+            MapaPrzeciwnika = new mapa();
             PBPrzeciwnika = new PictureBox[10, 10];
             PBMoje = new PictureBox[10, 10];
             PrawaStrona = new PictureBox();
@@ -48,7 +50,7 @@ namespace Statki
         private void Form1_Load(object sender, EventArgs e)
         {
             TransparentPanel.MouseClick += Mouse_Click;
-            MojaPlansza.randomRozstaw();
+            MapaMoja.randomRozstaw();
             generowanie_grafiki();
             updateMapy();
             tb_Czat.Enabled = false;
@@ -80,8 +82,6 @@ namespace Statki
                         {
                             Strzal = false;
                             lb_Log.Items.Add("Ty strzelasz x: " + (x + 1).ToString() + " y: " + (y + 1).ToString());
-                            lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
-                            lb_Log.SelectedIndex = -1;
                             HubProxy.Invoke("SendCoordinates", NickPrzeciwnika, y, x);
                         }
                     }
@@ -151,15 +151,20 @@ namespace Statki
         {
             string temp;
             
-            for(int x=0;x<10;x++)
-            {
-                for(int y=0;y<10;y++)
+                for(int x=0;x<10;x++)
                 {
-                    temp = MojaPlansza.czytaj(x, y).ToString();
-                    PBMoje[y,x].BackgroundImage = Image.FromFile("icons\\" + temp + ".png");
-                    temp = "x: " + x.ToString() + " y: " + y.ToString();
+                    for(int y=0;y<10;y++)
+                    {
+                        temp = MapaMoja.get(x, y).ToString();
+                        PBMoje[y,x].BackgroundImage = Image.FromFile("icons\\" + temp + ".png");
+
+                        if(MapaPrzeciwnika.get(x, y) == 5)
+                            PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\5.png");
+
+                        else if (MapaPrzeciwnika.get(x, y) > 0 && MapaPrzeciwnika.get(x, y) < 5)
+                            PBPrzeciwnika[y,x].BackgroundImage = Image.FromFile("icons\\x.png");
+                    }
                 }
-            }
         }
 
         private void gramy()
@@ -319,48 +324,63 @@ namespace Statki
             HubProxy.On<int, int>("GetCoordinates", (y, x)=>     //funkcja wykonuje sie po strzale przeciwnika
                 {
                     lb_Log.Items.Add("Przeciwnik strzela x: " + (x + 1) + " y: " + (y + 1));
-                    if (!MojaPlansza.strzal(x,y))
+                    if (!MapaMoja.strzal(x,y))
                     {
                         PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
                         lb_Log.Items.Add("WODA!");
-                        HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, 0, y, x);
+                        HubProxy.Invoke("SendShootInfoToEnemy", NickPrzeciwnika, 0, y, x);
                         label_Tura.Text = "Twój ruch!";
                         pb_Tura.BackColor = Color.Green;
                         label_Tura.ForeColor = Color.Green;
                         Strzal = true;
-                        lb_Log.Items.Add("tu sie wali");
-                        Thread.Sleep(1000);
-                        lb_Log.Items.Add("po 1 sec");
                     }
                     else
                     {
                         PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
                         lb_Log.Items.Add("TRAFIONY!");
-                        HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, 1, y, x);
+                        HubProxy.Invoke("SendShootInfoToEnemy", NickPrzeciwnika, MapaMoja.get(x, y), y, x);
+                        //if(MapaMoja.Zatopiony(x, y))
+                        //    lb_Log.Items.Add("ZATOPIONY!");
                         licznikLoose++;
                         czy_loose();
                     }
 
+                    lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
+                    lb_Log.SelectedIndex = -1;
                 });
 
-            HubProxy.On<int, int, int>("GetSinkInfo", (y, x, z) =>
+            HubProxy.On<int, int, int>("GetShootInfo", (y, x, z) =>
                 {
-                    if(z==1)
+                    if (z == 0)
                     {
-                        Strzal = true;
-                        PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
-                        lb_Log.Items.Add("TRAFIONY!");
-                        licznikWin++;
-                        czy_win();
-                    }
-                    if(z==0)
-                    {
-                        PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
+                        //PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
+                        MapaPrzeciwnika.set(x, y, 5);
                         lb_Log.Items.Add("WODA!");
                         label_Tura.Text = "Ruch przeciwnika!";
                         pb_Tura.BackColor = Color.Red;
                         label_Tura.ForeColor = Color.Red;
                     }
+                    else
+                    {
+                        Strzal = true;
+                        MapaPrzeciwnika.set(x, y, z);
+                        
+
+                        //PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
+                        lb_Log.Items.Add("TRAFIONY!");
+                        if(MapaPrzeciwnika.Zatopiony(x, y))
+                        {
+                            lb_Log.Items.Add("ZATOPIONY!");
+                            HubProxy.Invoke("SinkShip", NickPrzeciwnika, y, x);
+                        }
+                            
+                        licznikWin++;
+                        czy_win();
+                    }
+                    
+                    updateMapy();
+                    lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
+                    lb_Log.SelectedIndex = -1;
                 });
 
             HubProxy.On<List<UserDetail>>("SetUsersList", (ConnectedUsers2) =>      //po zazadaniu aktualizacji listy aktywnych
@@ -368,6 +388,14 @@ namespace Statki
                     ConnectedUsers = ConnectedUsers2;
                     GetActiveUsers();
                 });
+
+            HubProxy.On<int,int>("SinkShip", (y,x) =>      //po zazadaniu aktualizacji listy aktywnych
+            {                                                                   //userow serwer wywola na nas te funkcje
+                MapaMoja.Zatopiony(x, y);
+                lb_Log.Items.Add("ZATOPIONY!");
+                lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
+                lb_Log.SelectedIndex = -1;
+            });
 
             HubProxy.On<string, string>("addNewMessageToPage", (name, message) => //po napisaniu wiadomosci przez przeciwnika
                  lb_Czat.Items.Add(name + ": " + message));                       //serwer wywola te funkcje na nas
