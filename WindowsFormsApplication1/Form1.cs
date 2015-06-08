@@ -45,6 +45,8 @@ namespace Statki
             PrawaStrona = new PictureBox();
             LewaStrona = new PictureBox();
             TrwaGra = false;
+            licznikLoose = 0;
+            licznikWin = 0;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -81,7 +83,7 @@ namespace Statki
                         if (PBPrzeciwnika[y, x].BackgroundImage == null)
                         {
                             Strzal = false;
-                            lb_Log.Items.Add("Ty strzelasz x: " + (x + 1).ToString() + " y: " + (y + 1).ToString());
+                            lb_Log.Items.Add("Ty strzelasz x: " + (x + 1).ToString() + "  y: " + (y + 1).ToString());
                             HubProxy.Invoke("SendCoordinates", NickPrzeciwnika, y, x);
                         }
                     }
@@ -323,12 +325,13 @@ namespace Statki
 
             HubProxy.On<int, int>("GetCoordinates", (y, x)=>     //funkcja wykonuje sie po strzale przeciwnika
                 {
-                    lb_Log.Items.Add("Przeciwnik strzela x: " + (x + 1) + " y: " + (y + 1));
+                    lb_Log.Items.Add("Przeciwnik strzela x: " + (x + 1) + "  y: " + (y + 1));
                     if (!MapaMoja.strzal(x,y))
                     {
                         PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
                         lb_Log.Items.Add("WODA!");
-                        HubProxy.Invoke("SendShootInfoToEnemy", NickPrzeciwnika, 0, y, x);
+                       // HubProxy.Invoke("SendShootInfoToEnemy", NickPrzeciwnika, 0, y, x);
+                        HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, 0, y, x);
                         label_Tura.Text = "Twój ruch!";
                         pb_Tura.BackColor = Color.Green;
                         label_Tura.ForeColor = Color.Green;
@@ -338,7 +341,8 @@ namespace Statki
                     {
                         PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
                         lb_Log.Items.Add("TRAFIONY!");
-                        HubProxy.Invoke("SendShootInfoToEnemy", NickPrzeciwnika, MapaMoja.get(x, y), y, x);
+                        //HubProxy.Invoke("SendShootInfoToEnemy", NickPrzeciwnika, MapaMoja.get(x, y), y, x);
+                        HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, MapaMoja.get(x,y), y, x);
                         //if(MapaMoja.Zatopiony(x, y))
                         //    lb_Log.Items.Add("ZATOPIONY!");
                         licznikLoose++;
@@ -349,7 +353,7 @@ namespace Statki
                     lb_Log.SelectedIndex = -1;
                 });
 
-            HubProxy.On<int, int, int>("GetShootInfo", (y, x, z) =>
+            HubProxy.On<int, int, int>("GetSinkInfo", (y, x, z) =>
                 {
                     if (z == 0)
                     {
@@ -390,8 +394,8 @@ namespace Statki
                 });
 
             HubProxy.On<int,int>("SinkShip", (y,x) =>      //po zazadaniu aktualizacji listy aktywnych
-            {                                                                   //userow serwer wywola na nas te funkcje
-                MapaMoja.Zatopiony(x, y);
+            {                                              //userow serwer wywola na nas te funkcje
+                //MapaMoja.Zatopiony(x, y);
                 lb_Log.Items.Add("ZATOPIONY!");
                 lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
                 lb_Log.SelectedIndex = -1;
