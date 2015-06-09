@@ -38,45 +38,33 @@ namespace Statki
                 return true;
         }
 
-        public bool Zatopiony(int x,int y)
+        public int[] Zatopiony(int x,int y)
         {
             int licznik = 1;
             int pion = 2;
             int y_poczatkowe = y;
             int x_poczatkowe = x;
-
+            
             if (plansza[y, x] == 1)             //jeśli to jedynka to
             {                                   //instant zatapiamy
-                obramowanie(x, y, 1, true);
-                return true;
+                //obramowanie(x, y, 1, true);
+                return new int[4] {x, y, 1, 0};
             }
-
             else
             {
+                //System.Diagnostics.Debug.WriteLine("wchodze tuuu");
                 if(y>0 && y<9)
                 {
+                    //System.Diagnostics.Debug.WriteLine("y><y");
                     if (plansza[y, x] == plansza[y + 1, x] || plansza[y, x] == plansza[y - 1, x])
                         pion = 1;
-                }
-                else if(y == 0)          
-                {
-                    if (plansza[y, x] == plansza[y + 1, x])
-                        pion = 1;
-                }
-                else if(y == 9)
-                {
-                    if (plansza[y, x] == plansza[y - 1, x])
-                        pion = 1;
-                }
 
-                if(pion==2)     //jeśli juz wcześniej wyszło że statek pionowy to nie sprawdzamy czy poziomy
-                {
                     if (x > 0 && x < 9)
                     {
                         if (plansza[y, x] == plansza[y, x + 1] || plansza[y, x] == plansza[y, x - 1])
                             pion = 0;
                     }
-                    else if (x == 0)           
+                    else if (x == 0)
                     {
                         if (plansza[y, x] == plansza[y, x + 1])
                             pion = 0;
@@ -87,107 +75,107 @@ namespace Statki
                             pion = 0;
                     }
                 }
-
-                if(pion==2)         //wszystkie poprzednie warunki nie zostaly
-                {                   //spelnione, wartosc pionu bez zmian
-                    return false;   //statek nie jest zatopiony
-                }
-              
-                else if(pion == 1)
+                else if(y == 0)          
                 {
+                    //System.Diagnostics.Debug.WriteLine("y==0");
+                    if (plansza[y, x] == plansza[y + 1, x])
+                        pion = 1;
 
-                    if(y==0)
+                    if (x > 0 && x < 9)
                     {
-                        
-                        while(plansza[y, x] == plansza[y + 1, x])
-                        {
-                            licznik++;
-                            y++;
-                            if (y == 9)
-                                break;
-                        }
-                        if (licznik == plansza[x, y])
-                        {
-                            obramowanie(x, y_poczatkowe, licznik, true);
-                            return true;
-                        }
-                        else
-                            return false;      
+                        if (plansza[y, x] == plansza[y, x + 1] || plansza[y, x] == plansza[y, x - 1])
+                            pion = 0;
                     }
-
-                    else if (y == 9)
+                    else if (x == 0)
                     {
-
-                        while (plansza[y, x] == plansza[y - 1, x])
-                        {
-                            licznik++;
-                            y--;
-                            if (y == 0)
-                                break;
-                        }
-                        if (licznik == plansza[x, y])
-                        {
-                            obramowanie(x, y, licznik, true);
-                            return true;
-                        }
-                        else
-                            return false;
+                        if (plansza[y, x] == plansza[y, x + 1])
+                            pion = 0;
                     }
-
-                    else
-                    {
-                        //////////////
-                    }
-                }
-
-                else if(pion == 0)
-                {
-
-                    if (x == 0)
-                    {
-
-                        while (plansza[y, x] == plansza[y, x + 1])
-                        {
-                            licznik++;
-                            x++;
-                            if (x == 9)
-                                break;
-                        }
-                        if (licznik == plansza[x, y])
-                        {
-                            obramowanie(x_poczatkowe, y, licznik, false);
-                            return true;
-                        }
-                        else
-                            return false;
-                    }
-
                     else if (x == 9)
                     {
-
-                        while (plansza[y, x] == plansza[y, x - 1])
-                        {
-                            licznik++;
-                            x--;
-                            if (x == 0)
-                                break;
-                        }
-                        if (licznik == plansza[x, y])
-                        {
-                            obramowanie(x, y, licznik, false);
-                            return true;
-                        }
-                        else
-                            return false;
+                        if (plansza[y, x] == plansza[y, x - 1])
+                            pion = 0;
                     }
-
-                    else
-                    {
-                        /////////////////////
-                    }
-
                 }
-                return true;
+                else if(y == 9)
+                {
+                    //System.Diagnostics.Debug.WriteLine("y==9");
+                    if (plansza[y, x] == plansza[y - 1, x])
+                        pion = 1;
+
+                    if (x > 0 && x < 9)
+                    {
+                        if (plansza[y, x] == plansza[y, x + 1] || plansza[y, x] == plansza[y, x - 1])
+                            pion = 0;
+                    }
+                    else if (x == 0)
+                    {
+                        if (plansza[y, x] == plansza[y, x + 1])
+                            pion = 0;
+                    }
+                    else if (x == 9)
+                    {
+                        if (plansza[y, x] == plansza[y, x - 1])
+                            pion = 0;
+                    }
+                }
+                //System.Diagnostics.Debug.WriteLine("po pionach, pion:" + pion);
+                if(pion==2)                                 //wszystkie poprzednie warunki nie zostaly
+                {                                           //spelnione, wartosc pionu bez zmian
+                    return new int[4] {0,0,0,0};            //statek nie jest zatopiony
+                }
+                else if(pion==1)
+                {
+                    System.Diagnostics.Debug.WriteLine("wchodze pion x:" + x + " y:" + y);
+                    int k = -1;
+                    while (y<9 && plansza[y,x]==plansza[y+1, x])
+                    {
+                        y++;
+                    }
+                    System.Diagnostics.Debug.WriteLine("po pierwszej y:" + y);
+                    while (y + k >= 0 && plansza[y, x] == plansza[y + k, x])
+                    {
+                        licznik++;
+                        if (licznik == plansza[y + k, x])
+                        {
+                            System.Diagnostics.Debug.WriteLine("zwracam x:" + x + " y:" + y + " k:" + k + " licznik:" + licznik);
+                            return new int[4] { x, y + k, licznik, pion };
+                        }
+                        k--;
+                        System.Diagnostics.Debug.WriteLine("w drugiej k:" + k + " licz:" + licznik);
+                    }
+                    System.Diagnostics.Debug.WriteLine("licznik:"+ licznik +" plansz z k:" + plansza[y + k, x] + " plansza:"+plansza[y,x]); 
+                    
+                        
+                    return new int[4] { 0, 0, 0, 0 };
+                }
+                else if(pion==0)
+                {
+                    System.Diagnostics.Debug.WriteLine("wchodze poziom x:"+x+" y:"+y);
+                    int k = -1;
+                    while (x<9 && plansza[y, x] == plansza[y, x + 1])
+                    {
+                        x++;
+                    }
+                    System.Diagnostics.Debug.WriteLine("po pierwszej x:" + x);
+                    while (x + k >= 0 && plansza[y, x] == plansza[y, x + k])
+                    {
+                        licznik++;
+                        if (licznik == plansza[y, x + k])
+                        {
+                            System.Diagnostics.Debug.WriteLine("zwracam x:" + x + " y:" + y + " k:" + k + " licznik:" + licznik);
+                            return new int[4] { x + k, y, licznik, pion };
+                        }
+                        k--;
+                        System.Diagnostics.Debug.WriteLine("w drugiej k:" + k + " licz:" + licznik);
+                    }
+                    System.Diagnostics.Debug.WriteLine("licznik:"+ licznik +" plansz z k:" + plansza[y, x+k] + " plansza:"+plansza[y,x]); 
+                    
+                        
+                    return new int[4] { 0, 0, 0, 0 };
+                }
+                else
+                    return new int[4] {0,0,0,0};
             }
         }
 
@@ -252,7 +240,7 @@ namespace Statki
                 return false;
         }
 
-        private void obramowanie(int x, int y, int maszty, bool pion)
+        public void obramowanie(int x, int y, int maszty, bool pion)
         {
             for (int i = 0; i < maszty; i++)
             {

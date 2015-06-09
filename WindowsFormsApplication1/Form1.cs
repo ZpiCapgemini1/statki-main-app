@@ -172,25 +172,25 @@ namespace Statki
                 }
         }
 
-        public void zmianaUI()
+        private void zmianaUI()
         {
             //========== zmiana UI ==========
             tb_NickGracza.Visible = false;
             tb_Czat.Visible = true;
             tb_Czat.Enabled = true;
-            
+
             lb_ListaGraczy.Enabled = false;
             lb_ListaGraczy.Visible = false;
-            
+
             lb_Czat.Visible = true;
             lb_Log.Items.Clear();
-            
+
             label_Czat.Visible = true;
             label_Tura.Visible = true;
             label_Graj.Visible = false;
             label_Nick.Visible = false;
             label_Lista.Visible = false;
-            
+
             b_Wyslij.Visible = true;
             b_Wyslij.Enabled = true;
             b_Graj.Enabled = false;
@@ -199,39 +199,6 @@ namespace Statki
             pb_Tura.Enabled = true;
             pb_Tura.Visible = true;
             //========== zmiana UI ==========
-
-            //kto zaczyna? :D
-            /*if(zaczynasz())
-            {
-                pb_Tura.BackColor = Color.Green;
-                label_Tura.Text = "Twój ruch!";
-                Strzal = true;
-            }
-            else
-            {
-                pb_Tura.BackColor = Color.Red;
-                label_Tura.Text = "Ruch przeciwnika!";
-                Strzal = false;
-            }*/
-            //kto zaczyna? :D
-
-        }
-
-        private bool zaczynasz()
-        {
-            int ja=0;
-            int przeciwnik=0;
-
-            foreach (var o in UserName)
-                ja += o;
-
-            foreach (var o in NickPrzeciwnika)
-                przeciwnik += o;
-
-            if (ja > przeciwnik)
-                return true;
-            else
-                return false;
         }
         
         private void czy_win()
@@ -239,7 +206,7 @@ namespace Statki
             if(licznikWin==20)
             {
                 Strzal = false;
-                MessageBox.Show("Wygrałeś grę z "+NickPrzeciwnika+"!");
+                MessageBox.Show("Wygrałeś grę przeciwko "+NickPrzeciwnika+"! \nWynik "+licznikWin+":"+licznikLoose);
                 Application.Exit();
             }
         }
@@ -249,7 +216,7 @@ namespace Statki
             if(licznikLoose==20)
             {
                 Strzal = false;
-                MessageBox.Show("Przegrałeś grę"+NickPrzeciwnika+"!");
+                MessageBox.Show("Przegrałeś grę przeciwko " + NickPrzeciwnika + "! \nWynik " + licznikLoose + ":" + licznikWin);
                 Application.Exit();
             }
         }
@@ -394,24 +361,21 @@ namespace Statki
                     else
                     {
                         lb_Log.Items.Add("TRAFIONY!");
+                        licznikLoose++;
                         HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, MapaMoja.get(x,y), y, x);
                         MapaMoja.set(x, y, 6);
-                        //if(MapaMoja.Zatopiony(x, y))
-                        //    lb_Log.Items.Add("ZATOPIONY!");
-                        licznikLoose++;
-                        czy_loose();
                     }
 
                     updateMapy();
                     lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
                     lb_Log.SelectedIndex = -1;
+                    czy_loose();
                 });
 
             HubProxy.On<int, int, int>("GetSinkInfo", (y, x, z) =>
                 {
                     if (z == 0)
                     {
-                        //PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
                         MapaPrzeciwnika.set(x, y, 5);
                         lb_Log.Items.Add("WODA!");
                         label_Tura.Text = "Ruch przeciwnika!";
@@ -422,23 +386,35 @@ namespace Statki
                     {
                         Strzal = true;
                         MapaPrzeciwnika.set(x, y, z);
-                        
-
-                        //PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
                         lb_Log.Items.Add("TRAFIONY!");
-                        /*if(MapaPrzeciwnika.Zatopiony(x, y))
+                        licznikWin++;
+                        int[] a = new int[4];
+                        a = MapaPrzeciwnika.Zatopiony(x, y);
+                        if(a[2]!=0)
                         {
                             lb_Log.Items.Add("ZATOPIONY!");
-                            HubProxy.Invoke("SinkShip", NickPrzeciwnika, y, x);
-                        }*/
-                            
-                        licznikWin++;
-                        czy_win();
+                            if(a[3]==1)
+                            {
+                                System.Diagnostics.Debug.WriteLine("zat x:" + a[0] + " y:" + a[1] + " maszty:" + a[2] + " pion:" + a[3]);
+                                MapaPrzeciwnika.obramowanie(a[0], a[1], a[2], true);
+                                HubProxy.Invoke("SinkThatShip", NickPrzeciwnika, a[1], a[0], a[2], true);
+                            }
+                                
+                            else if (a[3]==0)
+                            {
+                                System.Diagnostics.Debug.WriteLine("zat x:" + a[0] + " y:" + a[1] + " maszty:" + a[2] + " pion:" + a[3]);
+                                MapaPrzeciwnika.obramowanie(a[0], a[1], a[2], false);
+                                HubProxy.Invoke("SinkThatShip", NickPrzeciwnika, a[1], a[0], a[2], false);
+                            }
+                               
+                        }   
+                        
                     }
                     
                     updateMapy();
                     lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
                     lb_Log.SelectedIndex = -1;
+                    czy_win();
                 });
 
             HubProxy.On<List<UserDetail>>("SetUsersList", (ConnectedUsers2) =>      //po zazadaniu aktualizacji listy aktywnych
@@ -447,12 +423,13 @@ namespace Statki
                     GetActiveUsers();
                 });
 
-            HubProxy.On<int,int>("SinkShip", (y,x) =>      //po zazadaniu aktualizacji listy aktywnych
+            HubProxy.On<int,int,int,bool>("SinkShip", (y,x,maszty,pion) =>      //po zazadaniu aktualizacji listy aktywnych
             {                                              //userow serwer wywola na nas te funkcje
-                //MapaMoja.Zatopiony(x, y);
+                MapaMoja.obramowanie(x, y, maszty, pion);
                 lb_Log.Items.Add("ZATOPIONY!");
                 lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
                 lb_Log.SelectedIndex = -1;
+                updateMapy();
             });
 
             HubProxy.On<string, string>("addNewMessageToPage", (name, message) => //po napisaniu wiadomosci przez przeciwnika
