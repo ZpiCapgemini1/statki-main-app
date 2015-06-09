@@ -21,7 +21,7 @@ namespace Statki
         public HubConnection Connection { get; set; }
         public static List<UserDetail> ConnectedUsers = new List<UserDetail>();
         //==SignalR==
-        
+
         private mapa MapaMoja;
         private mapa MapaPrzeciwnika;
         private PictureBox[,] PBPrzeciwnika;
@@ -56,14 +56,18 @@ namespace Statki
             generowanie_grafiki();
             updateMapy();
             tb_Czat.Enabled = false;
+            tb_Czat.Visible = false;
             b_Wyslij.Enabled = false;
+            b_Wyslij.Visible = false;
             lb_ListaGraczy.Enabled = false;
             lb_ListaGraczy.Visible = false;
+            lb_Czat.Visible = false;
             label_Graj.Visible = false;
             label_Lista.Visible = false;
             label_Tura.Visible = false;
+            label_Czat.Visible = false;
             pb_Tura.Enabled = false;
-            pb_Tura.Visible = false;
+            pb_Tura.Visible = false; 
         }
 
         //========== funkcje związane z widocznymi obiektami (buttony, panel itp) ==========
@@ -134,14 +138,13 @@ namespace Statki
             else
             {
                 NickPrzeciwnika = lb_ListaGraczy.GetItemText(lb_ListaGraczy.Items[lb_ListaGraczy.SelectedIndex]);
-                lb_Log.Items.Add(NickPrzeciwnika);
                 if (String.Equals(NickPrzeciwnika, UserName))
                 {
                     MessageBox.Show("Nie możesz grać sam ze sobą!!!");
                 }
                 else if (!String.Equals(NickPrzeciwnika, UserName))
                 {
-                    gramy();
+                    HubProxy.Invoke("ChallangeSomeone", UserName, NickPrzeciwnika);
                 }
             }
 
@@ -164,18 +167,13 @@ namespace Statki
                             PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\5.png");
 
                         else if (MapaPrzeciwnika.get(x, y) > 0 && MapaPrzeciwnika.get(x, y) < 5)
-                            PBPrzeciwnika[y,x].BackgroundImage = Image.FromFile("icons\\x.png");
+                            PBPrzeciwnika[y,x].BackgroundImage = Image.FromFile("icons\\strzall.png");
                     }
                 }
         }
 
-        private void gramy()
+        public void zmianaUI()
         {
-            //========== logika ==========
-            th.Abort();
-            TrwaGra = true;
-            //========== logika ==========
-
             //========== zmiana UI ==========
             tb_NickGracza.Visible = false;
             tb_Czat.Visible = true;
@@ -183,9 +181,10 @@ namespace Statki
             
             lb_ListaGraczy.Enabled = false;
             lb_ListaGraczy.Visible = false;
+            
             lb_Czat.Visible = true;
             lb_Log.Items.Clear();
-
+            
             label_Czat.Visible = true;
             label_Tura.Visible = true;
             label_Graj.Visible = false;
@@ -199,11 +198,10 @@ namespace Statki
 
             pb_Tura.Enabled = true;
             pb_Tura.Visible = true;
-            TransparentPanel.Visible = true;
             //========== zmiana UI ==========
 
             //kto zaczyna? :D
-            if(zaczynasz())
+            /*if(zaczynasz())
             {
                 pb_Tura.BackColor = Color.Green;
                 label_Tura.Text = "Twój ruch!";
@@ -214,10 +212,9 @@ namespace Statki
                 pb_Tura.BackColor = Color.Red;
                 label_Tura.Text = "Ruch przeciwnika!";
                 Strzal = false;
-            }
+            }*/
             //kto zaczyna? :D
 
-            
         }
 
         private bool zaczynasz()
@@ -236,12 +233,14 @@ namespace Statki
             else
                 return false;
         }
-
+        
         private void czy_win()
         {
             if(licznikWin==20)
             {
-                MessageBox.Show("Wygrałeś grę!");
+                Strzal = false;
+                MessageBox.Show("Wygrałeś grę z "+NickPrzeciwnika+"!");
+                Application.Exit();
             }
         }
 
@@ -249,7 +248,9 @@ namespace Statki
         {
             if(licznikLoose==20)
             {
-                MessageBox.Show("Przegrałeś grę!");
+                Strzal = false;
+                MessageBox.Show("Przegrałeś grę"+NickPrzeciwnika+"!");
+                Application.Exit();
             }
         }
 
@@ -317,20 +318,73 @@ namespace Statki
             lb_Log.Items.Add("Połączono!");         //połączenie z serwerem
             lb_Log.Items.Add("");                   //i dodanie siebie jako gracza
             HubProxy.Invoke("AddUser", UserName);
-            
 
             th = new Thread(odswiez);   //odpalamy watek ktory odswieza
             th.IsBackground = true;     //liste graczy co 2 sekundy
             th.Start();
+
+            HubProxy.On<string>("ChallaneRequest", (przeciwnik) =>
+            {
+                if (!TrwaGra)
+                {
+                    TrwaGra = true;
+                    NickPrzeciwnika = przeciwnik;
+                    DialogResult dialogResult = MessageBox.Show("Gracz "+NickPrzeciwnika+" wyzywa cię do gry. Przyjmujesz wyzwanie?", "Wyzwanie", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        while (th.IsAlive)
+                        {
+                            th.Abort();
+                            th.Join();
+                        }
+
+                        HubProxy.Invoke("PlayStart", NickPrzeciwnika);
+                        zmianaUI();
+
+                        pb_Tura.BackColor = Color.Green;
+                        label_Tura.Text = "Twój ruch!";
+                        Strzal = true;
+
+                        lb_Log.Items.Clear();
+                        lb_Log.Items.Add("Grasz przeciwko: " + NickPrzeciwnika);
+                    }
+                    else
+                    {
+                        TrwaGra = false;
+                        th.Start();
+                    }
+                }
+            });
+
+            HubProxy.On<string>("PlayON", (przeciwnik) =>
+            {
+                if (!TrwaGra)
+                {
+                    while (th.IsAlive)
+                    {
+                        th.Abort();
+                        th.Join();
+                    }
+
+                    TrwaGra = true;
+                    zmianaUI();
+
+                    pb_Tura.BackColor = Color.Red;
+                    label_Tura.Text = "Ruch przeciwnika!";
+                    Strzal = false;
+
+                    lb_Log.Items.Clear();
+                    lb_Log.Items.Add("Grasz przeciwko: "+NickPrzeciwnika);
+                }
+            });
 
             HubProxy.On<int, int>("GetCoordinates", (y, x)=>     //funkcja wykonuje sie po strzale przeciwnika
                 {
                     lb_Log.Items.Add("Przeciwnik strzela x: " + (x + 1) + "  y: " + (y + 1));
                     if (!MapaMoja.strzal(x,y))
                     {
-                        PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\kropa.png");
+                        MapaMoja.set(x, y, 5);
                         lb_Log.Items.Add("WODA!");
-                       // HubProxy.Invoke("SendShootInfoToEnemy", NickPrzeciwnika, 0, y, x);
                         HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, 0, y, x);
                         label_Tura.Text = "Twój ruch!";
                         pb_Tura.BackColor = Color.Green;
@@ -339,16 +393,16 @@ namespace Statki
                     }
                     else
                     {
-                        PBMoje[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
                         lb_Log.Items.Add("TRAFIONY!");
-                        //HubProxy.Invoke("SendShootInfoToEnemy", NickPrzeciwnika, MapaMoja.get(x, y), y, x);
                         HubProxy.Invoke("SendSinkInfoToEnemy", NickPrzeciwnika, MapaMoja.get(x,y), y, x);
+                        MapaMoja.set(x, y, 6);
                         //if(MapaMoja.Zatopiony(x, y))
                         //    lb_Log.Items.Add("ZATOPIONY!");
                         licznikLoose++;
                         czy_loose();
                     }
 
+                    updateMapy();
                     lb_Log.SelectedIndex = lb_Log.Items.Count - 1;
                     lb_Log.SelectedIndex = -1;
                 });
@@ -372,11 +426,11 @@ namespace Statki
 
                         //PBPrzeciwnika[y, x].BackgroundImage = Image.FromFile("icons\\x.png");
                         lb_Log.Items.Add("TRAFIONY!");
-                        if(MapaPrzeciwnika.Zatopiony(x, y))
+                        /*if(MapaPrzeciwnika.Zatopiony(x, y))
                         {
                             lb_Log.Items.Add("ZATOPIONY!");
                             HubProxy.Invoke("SinkShip", NickPrzeciwnika, y, x);
-                        }
+                        }*/
                             
                         licznikWin++;
                         czy_win();
@@ -403,6 +457,8 @@ namespace Statki
 
             HubProxy.On<string, string>("addNewMessageToPage", (name, message) => //po napisaniu wiadomosci przez przeciwnika
                  lb_Czat.Items.Add(name + ": " + message));                       //serwer wywola te funkcje na nas
+
+
         }
 
         private void GetActiveUsers()
@@ -424,8 +480,8 @@ namespace Statki
 
         private void odswiez()
         {
-            while (true)                    //watek odswieza liste
-            {                               //graczy co 2 sekundy
+            while (true)                            //watek odswieza liste
+            {                                       //graczy co 2 sekundy
                 HubProxy.Invoke("GetUsersList");
                 System.Threading.Thread.Sleep(2000);
             }
@@ -446,6 +502,5 @@ namespace Statki
             }
         }
 
-       
     }
 }

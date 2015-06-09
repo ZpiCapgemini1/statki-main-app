@@ -65,7 +65,6 @@
             this.lb_Czat.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.lb_Czat.Size = new System.Drawing.Size(253, 173);
             this.lb_Czat.TabIndex = 11;
-            this.lb_Czat.Visible = false;
             // 
             // b_Wyslij
             // 
@@ -75,7 +74,6 @@
             this.b_Wyslij.TabIndex = 12;
             this.b_Wyslij.Text = "Wyślij";
             this.b_Wyslij.UseVisualStyleBackColor = true;
-            this.b_Wyslij.Visible = false;
             this.b_Wyslij.Click += new System.EventHandler(this.b_Wyslij_Click);
             // 
             // tb_Czat
@@ -84,7 +82,6 @@
             this.tb_Czat.Name = "tb_Czat";
             this.tb_Czat.Size = new System.Drawing.Size(167, 20);
             this.tb_Czat.TabIndex = 13;
-            this.tb_Czat.Visible = false;
             // 
             // label_Log
             // 
@@ -103,7 +100,6 @@
             this.label_Czat.Size = new System.Drawing.Size(28, 13);
             this.label_Czat.TabIndex = 15;
             this.label_Czat.Text = "Czat";
-            this.label_Czat.Visible = false;
             // 
             // tb_NickGracza
             // 
@@ -192,7 +188,6 @@
             this.TransparentPanel.Name = "TransparentPanel";
             this.TransparentPanel.Size = new System.Drawing.Size(400, 400);
             this.TransparentPanel.TabIndex = 16;
-            this.TransparentPanel.Visible = false;
             // 
             // Form1
             // 
@@ -229,7 +224,6 @@
         #endregion
 
         private System.Windows.Forms.ListBox lb_Log;
-        private System.Windows.Forms.ListBox lb_Czat;
         private System.Windows.Forms.Button b_Wyslij;
         private System.Windows.Forms.TextBox tb_Czat;
         private System.Windows.Forms.Label label_Log;
@@ -244,6 +238,7 @@
         private System.Windows.Forms.Label label_Graj;
         private System.Windows.Forms.PictureBox pb_Tura;
         private System.Windows.Forms.Label label_Tura;
+        public System.Windows.Forms.ListBox lb_Czat;
     }
 }
 
